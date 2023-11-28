@@ -1,10 +1,10 @@
-import {createUseStyles} from "react-jss";
+import { createUseStyles } from "react-jss";
 import Container from "../../components/Container";
 import Row from "../../components/Row";
 import Column from "../../components/Column";
 import TasksAPI from "../../http/task.http";
 import useError from "../../hooks/useError";
-import {useEffect, useMemo, useState} from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     dateIsInRange,
     dateRenderer,
@@ -14,13 +14,14 @@ import {
     moveItems, objToFlatArray,
     reorderItems
 } from "../../utilities/helpers";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import Task from "../../components/Task";
 import HomeTableHeader from "./home-table-heading";
 import TodoInputBar from "./todo-input-bar/TodoInputBar";
 import FilterBar from "./filter-bar/FilterBar";
-import {useWindowSize} from "../../hooks/useWindowSize";
+import { useWindowSize } from "../../hooks/useWindowSize";
 import EditTaskModal from "./EditTaskModal";
+import { TASK_MODEL } from "../../models";
 
 const useStyles = createUseStyles(theme => ({
     taskBodyRoot: {
@@ -55,7 +56,7 @@ const Homepage = () => {
 
     const classes = useStyles();
 
-    const {width} = useWindowSize()
+    const { width } = useWindowSize()
     const isMobile = width < 600
 
     useEffect(() => {
@@ -64,7 +65,7 @@ const Homepage = () => {
 
     const fetchTasks = async () => {
         try {
-            const {data} = await TasksAPI.getTasks();
+            const { data } = await TasksAPI.getTasks();
             setTasks(groupByDate(data));
         } catch (error) {
             handleApiError({
@@ -80,10 +81,10 @@ const Homepage = () => {
      * @param newTask
      * @returns {Promise<void>}
      */
-    const onEditTask = async (oldTask,newTask) => {
+    const onEditTask = async (oldTask, newTask) => {
         try {
-            const {data} = await TasksAPI.editTask(newTask);
-            onUpdateItem(oldTask,data)
+            const { data } = await TasksAPI.editTask(newTask);
+            onUpdateItem(oldTask, data)
         } catch (error) {
             handleApiError({
                 error,
@@ -91,23 +92,23 @@ const Homepage = () => {
             })
         }
     }
-    const onUpdateItem = (oldItem,updatedItem) => {
+    const onUpdateItem = (oldItem, updatedItem) => {
         let newTasks = tasks;
         const isDateChanged = updatedItem[TASK_MODEL.date] !== oldItem[TASK_MODEL.date] && !(isBeforeToday(oldItem[TASK_MODEL.date]) && isBeforeToday(updatedItem[TASK_MODEL.date]))
 
-        if(isDateChanged) {
+        if (isDateChanged) {
             //remove the task from old list
-            if(isBeforeToday(oldItem[TASK_MODEL.date])){
+            if (isBeforeToday(oldItem[TASK_MODEL.date])) {
                 newTasks["Expired"].filter(task => task[TASK_MODEL.id] !== updatedItem[TASK_MODEL.id])
             } else {
                 newTasks[oldItem[TASK_MODEL.date]] = newTasks[oldItem[TASK_MODEL.date]].filter(task => task[TASK_MODEL.id] !== updatedItem[TASK_MODEL.id])
             }
 
             //add the task in new list
-            if(isBeforeToday(updatedItem[TASK_MODEL.date])){
+            if (isBeforeToday(updatedItem[TASK_MODEL.date])) {
                 newTasks["Expired"].push(updatedItem)
             } else {
-                if(updatedItem[TASK_MODEL.date] in newTasks) {
+                if (updatedItem[TASK_MODEL.date] in newTasks) {
                     newTasks[updatedItem[TASK_MODEL.date]].push(updatedItem)
                 } else {
                     newTasks[updatedItem[TASK_MODEL.date]] = [updatedItem];
@@ -115,7 +116,7 @@ const Homepage = () => {
             }
         } else {
             //update the task in the same list
-            if(isBeforeToday(updatedItem[TASK_MODEL.date])) {
+            if (isBeforeToday(updatedItem[TASK_MODEL.date])) {
                 const taskToUpdateIndex = newTasks["Expired"].findIndex(task => task[TASK_MODEL.id] === updatedItem[TASK_MODEL.id])
                 newTasks["Expired"][taskToUpdateIndex] = updatedItem
             } else {
@@ -123,7 +124,7 @@ const Homepage = () => {
                 newTasks[updatedItem[TASK_MODEL.date]][taskToUpdateIndex] = updatedItem
             }
         }
-        setTasks({...newTasks});
+        setTasks({ ...newTasks });
     }
 
     /**
@@ -132,10 +133,10 @@ const Homepage = () => {
      * @param index
      * @returns {Promise<void>}
      */
-    const onDeleteTask = async (task,index) => {
+    const onDeleteTask = async (task, index) => {
         try {
             await TasksAPI.deleteTask(task[TASK_MODEL.id]);
-            onDeleteItem(task[TASK_MODEL.date],index)
+            onDeleteItem(task[TASK_MODEL.date], index)
         } catch (error) {
             handleApiError({
                 error,
@@ -143,16 +144,16 @@ const Homepage = () => {
             })
         }
     }
-    const onDeleteItem = (key,index) => {
+    const onDeleteItem = (key, index) => {
         let newTasks = tasks;
         //remember that key is => date
         //check if is Expired
-        if(isBeforeToday(key)){
-            newTasks["Expired"].splice(index,1);
-        }else{
-            newTasks[key].splice(index,1);
+        if (isBeforeToday(key)) {
+            newTasks["Expired"].splice(index, 1);
+        } else {
+            newTasks[key].splice(index, 1);
         }
-        setTasks({...newTasks});
+        setTasks({ ...newTasks });
     }
 
     /**
@@ -172,23 +173,23 @@ const Homepage = () => {
         }
     }
     const onDragEnd = (result) => {
-        const {source, destination} = result;
+        const { source, destination } = result;
         // dropped outside the list
         if (!destination) {
             return;
         }
         const sInd = source.droppableId;
         const dInd = destination.droppableId;
-        const newState = {...tasks};
+        const newState = { ...tasks };
 
         if (sInd === dInd) {
             newState[sInd] = reorderItems(tasks[sInd], source.index, destination.index);
-            setTasks({...newState});
+            setTasks({ ...newState });
         } else {
             const result = moveItems(tasks[sInd], tasks[dInd], source, destination);
             newState[sInd] = result[sInd];
             newState[dInd] = result[dInd];
-            setTasks({...newState});
+            setTasks({ ...newState });
         }
 
         onOrderTasks(newState)
@@ -200,24 +201,24 @@ const Homepage = () => {
      * @returns {Promise<void>}
      */
     const onAddTasks = async (task) => {
-        const {data} = await TasksAPI.addTask(task);
+        const { data } = await TasksAPI.addTask(task);
         onAddItem(data)
     }
     const onAddItem = (newItem) => {
         let newTasks = tasks;
-        if(newItem?.date in newTasks){
+        if (newItem?.date in newTasks) {
             newTasks[newItem?.date].push(newItem);
-        }else{
+        } else {
             newTasks[newItem?.date] = newTasks[newItem?.date] || [];
             newTasks[newItem?.date].push(newItem);
         }
-        setTasks({...newTasks});
+        setTasks({ ...newTasks });
     }
 
     const filteredTasks = useMemo(
         () => {
             const filtered = {}
-            if(tasks){
+            if (tasks) {
                 Object.keys(tasks).forEach(date => {
                     const filteredDate = tasks[date].filter(t => {
                         const isInDate = dateFilter ?
@@ -226,7 +227,7 @@ const Homepage = () => {
                         const isInPriority = priority ? t[TASK_MODEL.effort] === priority.value : true
                         return isInDate && isInSearch && isInPriority
                     })
-                    if(filteredDate.length) filtered[date] = filteredDate
+                    if (filteredDate.length) filtered[date] = filteredDate
                 })
             }
             return filtered
@@ -241,7 +242,7 @@ const Homepage = () => {
             dateFilter={dateFilter}
             onPriorityHandler={setPriority}
         />
-        <HomeTableHeader/>
+        <HomeTableHeader />
         <Container className={classes.taskBodyRoot}>
             <Row>
                 <Column start={2} span={10}>
@@ -258,17 +259,17 @@ const Homepage = () => {
                                                 <Draggable key={task.id} draggableId={`item-${task.id}`} index={index}>
                                                     {(provided, snapshot) => (
                                                         <Task task={task}
-                                                              index={index}
-                                                              isLast={(tasks[date]?.length - 1 === index)}
-                                                              ref={provided.innerRef}
-                                                              onDeleteCb={onDeleteTask}
-                                                              onUpdateCb={onEditTask}
-                                                              onEditCb={() =>{
-                                                                  setOpenedTask(task)
-                                                                  setShowEditModal(true)
-                                                              }}
-                                                              draggableProps={provided.draggableProps}
-                                                              dragHandleProps={provided.dragHandleProps}
+                                                            index={index}
+                                                            isLast={(tasks[date]?.length - 1 === index)}
+                                                            ref={provided.innerRef}
+                                                            onDeleteCb={onDeleteTask}
+                                                            onUpdateCb={onEditTask}
+                                                            onEditCb={() => {
+                                                                setOpenedTask(task)
+                                                                setShowEditModal(true)
+                                                            }}
+                                                            draggableProps={provided.draggableProps}
+                                                            dragHandleProps={provided.dragHandleProps}
                                                         />
                                                     )}
                                                 </Draggable>
@@ -289,7 +290,7 @@ const Homepage = () => {
                 task={openedTask}
             />
         )}
-        <TodoInputBar task={isMobile && openedTask} onCancelCb={setOpenedTask} onAddTaskCb={onAddTasks} onEditTaskCb={onEditTask}/>
+        <TodoInputBar task={isMobile && openedTask} onCancelCb={setOpenedTask} onAddTaskCb={onAddTasks} onEditTaskCb={onEditTask} />
     </>
 }
 
