@@ -1,16 +1,16 @@
-import {createUseStyles} from "react-jss"
+import { createUseStyles } from "react-jss"
 import TextArea from "../../../components/TextArea"
 import Checkbox from "../../../components/Checkbox"
-import React, {useState} from "react"
+import React, { useState } from "react"
 import Popover from "../../../components/Popover"
-import {useForm, useWatch} from "react-hook-form"
-import {yupResolver} from "@hookform/resolvers/yup/dist/yup"
-import {validationSchema} from "./model"
+import { useForm, useWatch } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup/dist/yup"
+import { validationSchema } from "./model"
 import dayjs from "dayjs"
-import {TASK_MODEL} from "../../../models";
+import { TASK_MODEL } from "../../../models";
 import DatePickerInput from "../../../components/DatePickerInput";
 import Select from "../../../components/Select";
-import {TASK_PRIORITIES} from "../../../models/task";
+import { TASK_PRIORITIES } from "../../../models/task";
 
 const useStyles = createUseStyles(theme => ({
     root: {
@@ -48,14 +48,14 @@ const useStyles = createUseStyles(theme => ({
     }
 }))
 
-const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
+const EditTaskModal = ({ onClose, onUpdateCb, task }) => {
 
     const [date, setDate] = useState(task[TASK_MODEL.date])
 
     const classes = useStyles()
 
     const onSubmit = (formValues) => {
-        onUpdateCb && onUpdateCb({...task},{
+        onUpdateCb && onUpdateCb({ ...task }, {
             ...task,
             ...formValues,
             [TASK_MODEL.effort]: formValues[TASK_MODEL.effort].value,
@@ -64,7 +64,7 @@ const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
         onClose();
     }
 
-    const {handleSubmit, register, control, reset, setValue, formState: {errors}} = useForm({
+    const { handleSubmit, register, control, reset, setValue, formState: { errors } } = useForm({
         shouldUnregister: false,
         mode: 'onBlur',
         reValidateMode: 'onChange',
@@ -79,7 +79,7 @@ const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
         }
     })
 
-    const description = useWatch({name: TASK_MODEL.description, control})
+    const description = useWatch({ name: TASK_MODEL.description, control })
 
     return (
         <Popover
@@ -104,7 +104,7 @@ const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
         >
             <div className={classes.root}>
                 <div className={classes.textareaWrapper}>
-                    <Checkbox className={classes.checkbox} {...register(TASK_MODEL.completed)}/>
+                    <Checkbox className={classes.checkbox} {...register(TASK_MODEL.completed)} />
                     <TextArea
                         className={classes.textarea}
                         maxLength={200}

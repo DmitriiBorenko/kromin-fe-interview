@@ -22,12 +22,14 @@ import FilterBar from "./filter-bar/FilterBar";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import EditTaskModal from "./EditTaskModal";
 import { TASK_MODEL } from "../../models";
+import Toast from "../../components/SnackBar";
+import useSuccess from "../../hooks/useSuccess";
 
 const useStyles = createUseStyles(theme => ({
     taskBodyRoot: {
         paddingTop: 0,
-        height: `calc(${window.innerHeight}px - 184px)`,
-        overflow: "scroll",
+        height: `calc(${window.innerHeight}px - 184px - 106px)`,
+        overflow: "auto",
         paddingBottom: 40,
         [theme.mediaQueries.lUp]: {
             paddingBottom: 16
@@ -47,6 +49,7 @@ const useStyles = createUseStyles(theme => ({
 
 const Homepage = () => {
     const showError = useError()
+    const showSuccess = useSuccess()
     const [searchInput, setSearchInput] = useState('');
     const [tasks, setTasks] = useState(null);
     const [dateFilter, setDateFilters] = useState('');
@@ -74,6 +77,7 @@ const Homepage = () => {
             })
         }
     }
+
 
     /**
      * Edit task
@@ -122,6 +126,9 @@ const Homepage = () => {
             } else {
                 const taskToUpdateIndex = newTasks[updatedItem[TASK_MODEL.date]].findIndex(task => task[TASK_MODEL.id] === updatedItem[TASK_MODEL.id])
                 newTasks[updatedItem[TASK_MODEL.date]][taskToUpdateIndex] = updatedItem
+            }
+            if (!oldItem[TASK_MODEL.completed] && updatedItem[TASK_MODEL.completed]) {
+                showSuccess(' Task checked as completed')
             }
         }
         setTasks({ ...newTasks });

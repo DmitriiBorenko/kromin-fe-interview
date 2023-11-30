@@ -1,8 +1,7 @@
-import {createUseStyles} from 'react-jss'
-import {Outlet} from "react-router-dom";
+import { createUseStyles } from 'react-jss'
+import { Outlet } from "react-router-dom";
 import useError from "../../hooks/useError";
-import useAlert from "../../hooks/useAlert";
-import {useViewportSize} from "../../hooks/useViewportSize";
+import { useViewportSize } from "../../hooks/useViewportSize";
 
 
 const useStyles = createUseStyles((theme) => ({
@@ -16,15 +15,13 @@ const useStyles = createUseStyles((theme) => ({
 
 const PublicLayout = () => {
     const { vh } = useViewportSize()
-
-    const {isAlertOpen, alertData, closeAlert} = useAlert()
     const showError = useError()
-    const classes = useStyles({vh})
+    const classes = useStyles({ vh })
 
     return <>
-            <main className={classes.main}>
-                <Outlet/>
-            </main>
+        <main className={classes.main}>
+            <Outlet />
+        </main>
     </>
 }
 
