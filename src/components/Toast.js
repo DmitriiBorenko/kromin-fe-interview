@@ -5,33 +5,16 @@ import color from "../assets/images/color.svg";
 import emojiSad from "../assets/images/emoji-sad.svg";
 
 const useStyles = createUseStyles(theme => ({
-    // '@keyframes fadeIn': {
-    //     from: {
-    //         opacity: 0,
-    //         transform: 'translateY(10px)', /* Optional: You can add a slight translateY for a subtle upward motion */
-    //     },
-    //     to: {
-    //         opacity: 1,
-    //         transform: 'translateY(0)',
-    //     }
-    // },
-
     '@keyframes fade': {
         '0%,100%': { opacity: 0 },
         '50%': { opacity: 1 }
     },
-
-    //     elementToFadeInAndOut {
-    //     opacity: 1;
-    //     animation: fade 2s linear;
-    // }
-    // },
     toastBox: {
         borderRadius: '11px',
         padding: '10px',
         display: 'flex',
         justifyContent: 'space-between',
-        opacity: 0, /* Initially set opacity to 0 */
+        opacity: 0,
         animation: '$fade 3s linear'
     },
     toastBox__error: {
