@@ -1,4 +1,3 @@
-import React, { useContext, useEffect, useState } from 'react';
 import { createUseStyles } from "react-jss";
 import useAlert from '../../hooks/useAlert';
 import Toast from './Toast';
@@ -30,11 +29,10 @@ const useStyles = createUseStyles(theme => ({
 
 
 
-const SnackBar = ({ }) => {
+const SnackBar = () => {
     const { alertData } = useAlert()
     const classes = useStyles()
     const { error, success, undo } = Object.groupBy(alertData, ({ severity }) => severity)
-    console.log(undo)
     return (
         <div className={classes.test}>
             <div className={cx(classes.snackBarContainer, classes.snackBarContainerRightBottom)}>

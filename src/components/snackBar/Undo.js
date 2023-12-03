@@ -102,6 +102,10 @@ const useStyles = createUseStyles(theme => ({
 const Undo = ({ toast }) => {
     const { closeAlert } = useAlert()
     const classes = useStyles()
+    const handleCloseBack = () => {
+        toast?.action()
+        closeAlert(toast.id)
+    }
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             closeAlert(toast.id)
@@ -111,7 +115,6 @@ const Undo = ({ toast }) => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-    console.log(toast)
     return (
         <div className={`${classes.toastBox} ${classes.toasBox__undo}`}>
             <div className={classes.toastItemBoxUndo}>
@@ -137,7 +140,7 @@ const Undo = ({ toast }) => {
                         <img style={{ width: '16px', height: '16px' }} src={back} alt='back' />
                     </div>
                     <div>
-                        <span className={classes.toastSpanUndo} onClick={toast?.action}>Undo</span>
+                        <span className={classes.toastSpanUndo} onClick={handleCloseBack}>Undo</span>
                     </div>
                 </button>
             </div>

@@ -24,7 +24,6 @@ const TasksAPI = {
     },
     restoreTask: (data, ids) => {
         const url = `/todos/${data[TASK_MODEL.id]}/restore`
-        console.log(data, 'data')
         return axios.post(url)
     },
 }
