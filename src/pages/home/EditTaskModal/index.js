@@ -34,9 +34,9 @@ const useStyles = createUseStyles(theme => ({
         marginLeft: 32,
 
         "& textarea": {
-            borderRadius: 0,
-            border: "none",
-            padding: "0 !important",
+            borderRadius: '12px',
+            border: '1px solid grey',
+            padding: "10px",
             fontSize: 16,
             fontWeight: 500,
             color: theme.palette.common.textBlack,
@@ -54,14 +54,15 @@ const EditTaskModal = ({ onClose, onUpdateCb, task }) => {
 
     const classes = useStyles()
 
+
     const onSubmit = (formValues) => {
         onUpdateCb && onUpdateCb({ ...task }, {
             ...task,
             ...formValues,
-            [TASK_MODEL.effort]: formValues[TASK_MODEL.effort].value,
             date: dayjs(date).format("YYYY-MM-DD")
         })
         onClose();
+
     }
 
     const { handleSubmit, register, control, reset, setValue, formState: { errors } } = useForm({
@@ -80,6 +81,7 @@ const EditTaskModal = ({ onClose, onUpdateCb, task }) => {
     })
 
     const description = useWatch({ name: TASK_MODEL.description, control })
+    const effort = useWatch({ name: TASK_MODEL.effort, control })
 
     return (
         <Popover
@@ -115,11 +117,19 @@ const EditTaskModal = ({ onClose, onUpdateCb, task }) => {
                 </div>
                 <div className={classes.buttons}>
                     <DatePickerInput
+                        minDate={new Date()}
                         value={date}
                         callback={setDate}
                     />
                     <Select
                         control={control}
+                        value={
+                            effort > 0
+                                ? TASK_PRIORITIES.find(
+                                    option => option.value === effort
+                                )
+                                : 0
+                        }
                         name={TASK_MODEL.effort}
                         placeholder={'Effort'}
                         isClearable

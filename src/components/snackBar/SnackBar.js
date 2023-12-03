@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { createUseStyles } from "react-jss";
-import useAlert from '../hooks/useAlert';
+import useAlert from '../../hooks/useAlert';
 import Toast from './Toast';
 import cx from 'classnames'
+import Undo from './Undo';
 
 
 const useStyles = createUseStyles(theme => ({
@@ -12,6 +13,7 @@ const useStyles = createUseStyles(theme => ({
         gap: 10,
         position: 'absolute',
         zIndex: '5',
+        alignItems: 'end'
     },
     snackBarContainerRightTop: {
         top: '10px',
@@ -21,6 +23,9 @@ const useStyles = createUseStyles(theme => ({
         bottom: '10px',
         right: '40px',
     },
+    test: {
+        display: 'flex'
+    }
 }))
 
 
@@ -28,9 +33,10 @@ const useStyles = createUseStyles(theme => ({
 const SnackBar = ({ }) => {
     const { alertData } = useAlert()
     const classes = useStyles()
-    const { error, success } = Object.groupBy(alertData, ({ severity }) => severity)
+    const { error, success, undo } = Object.groupBy(alertData, ({ severity }) => severity)
+    console.log(undo)
     return (
-        <>
+        <div className={classes.test}>
             <div className={cx(classes.snackBarContainer, classes.snackBarContainerRightBottom)}>
                 {success?.map((toast) => (
                     <Toast toast={toast} key={toast.id} />
@@ -41,7 +47,12 @@ const SnackBar = ({ }) => {
                     <Toast toast={toast} key={toast.id} />
                 ))}
             </div>
-        </>
+            <div className={cx(classes.snackBarContainer, classes.snackBarContainerRightBottom)}>
+                {undo?.map((toast) => (
+                    <Undo toast={toast} key={toast.id} />
+                ))}
+            </div>
+        </div>
     )
 }
 

@@ -3,7 +3,7 @@ import { createUseStyles, useTheme } from 'react-jss'
 import { useController } from 'react-hook-form'
 import CreatableSelect from 'react-select/creatable'
 import ReactSelect from 'react-select'
-import {CrossIcon} from "../theme/icons";
+import { CrossIcon } from "../theme/icons";
 
 const useStyles = createUseStyles((theme) => ({
     root: {
@@ -44,7 +44,7 @@ const Select = ({
     })
 
     // This extend the default onChange
-    const onChangeHandler = (value) => {
+    const onChangeHandler = ({ value }) => {
         if (typeof onChangeCallback === 'function') onChangeCallback(value)
         if (!isMulti || (isMulti && value.length <= maxItems)) onChange(value) // Limit multi select
     }
@@ -235,7 +235,7 @@ const Select = ({
 
 const ClearIndicator = (props) => {
     const {
-        children = <CrossIcon width={8} height={8}/>,
+        children = <CrossIcon width={8} height={8} />,
         getStyles,
         innerProps: { ref, ...restInnerProps },
     } = props;
@@ -243,7 +243,7 @@ const ClearIndicator = (props) => {
         <div
             {...restInnerProps}
             ref={ref}
-            style={{...getStyles('clearIndicator', props)}}
+            style={{ ...getStyles('clearIndicator', props) }}
         >
             <div style={{ padding: '0px 5px', display: 'flex' }}>{children}</div>
         </div>

@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useEffect, useReducer } from 'react'
 import { v4 as uuidv4 } from 'uuid';
-import SnackBar from '../components/SnackBar';
+import SnackBar from '../components/snackBar/SnackBar';
 
 export const AlertContext = createContext(null)
 

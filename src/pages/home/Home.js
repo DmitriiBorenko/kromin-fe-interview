@@ -22,13 +22,13 @@ import FilterBar from "./filter-bar/FilterBar";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import EditTaskModal from "./EditTaskModal";
 import { TASK_MODEL } from "../../models";
-import Toast from "../../components/SnackBar";
 import useSuccess from "../../hooks/useSuccess";
+import useAlert from "../../hooks/useAlert";
 
 const useStyles = createUseStyles(theme => ({
     taskBodyRoot: {
         paddingTop: 0,
-        height: `calc(${window.innerHeight}px - 184px - 106px)`,
+        height: `calc(${window.innerHeight}px - 184px - 100px)`,
         overflow: "auto",
         paddingBottom: 40,
         [theme.mediaQueries.lUp]: {
@@ -49,6 +49,7 @@ const useStyles = createUseStyles(theme => ({
 
 const Homepage = () => {
     const showError = useError()
+    const { triggerAlert } = useAlert()
     const showSuccess = useSuccess()
     const [searchInput, setSearchInput] = useState('');
     const [tasks, setTasks] = useState(null);
@@ -64,6 +65,7 @@ const Homepage = () => {
 
     useEffect(() => {
         fetchTasks()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const fetchTasks = async () => {
@@ -86,6 +88,7 @@ const Homepage = () => {
      * @returns {Promise<void>}
      */
     const onEditTask = async (oldTask, newTask) => {
+        console.log(oldTask, newTask)
         try {
             const { data } = await TasksAPI.editTask(newTask);
             onUpdateItem(oldTask, data)
@@ -143,6 +146,12 @@ const Homepage = () => {
     const onDeleteTask = async (task, index) => {
         try {
             await TasksAPI.deleteTask(task[TASK_MODEL.id]);
+            triggerAlert({
+                severity: 'undo', title: 'Task deleted', action: (async () => {
+                    await TasksAPI.restoreTask(task)
+                    fetchTasks()
+                })
+            })
             onDeleteItem(task[TASK_MODEL.date], index)
         } catch (error) {
             handleApiError({
@@ -207,17 +216,24 @@ const Homepage = () => {
      * @param task
      * @returns {Promise<void>}
      */
-    const onAddTasks = async (task) => {
+    const onAddTasks = async (task, index) => {
         const { data } = await TasksAPI.addTask(task);
-        onAddItem(data)
+        onAddItem(data, index)
     }
-    const onAddItem = (newItem) => {
+    const onAddItem = (newItem, index) => {
         let newTasks = tasks;
-        if (newItem?.date in newTasks) {
-            newTasks[newItem?.date].push(newItem);
+        if (index !== undefined) {
+            if (!newTasks[newItem[TASK_MODEL.date]]) {
+                newTasks[newItem[TASK_MODEL.date]] = []
+            }
+            newTasks[newItem[TASK_MODEL.date]].slice(index, 0, newItem)
         } else {
-            newTasks[newItem?.date] = newTasks[newItem?.date] || [];
-            newTasks[newItem?.date].push(newItem);
+            if (newItem?.date in newTasks) {
+                newTasks[newItem?.date].push(newItem);
+            } else {
+                newTasks[newItem?.date] = newTasks[newItem?.date] || [];
+                newTasks[newItem?.date].push(newItem);
+            }
         }
         setTasks({ ...newTasks });
     }
@@ -295,6 +311,7 @@ const Homepage = () => {
                     setShowEditModal(false)
                 }}
                 task={openedTask}
+                onUpdateCb={onEditTask}
             />
         )}
         <TodoInputBar task={isMobile && openedTask} onCancelCb={setOpenedTask} onAddTaskCb={onAddTasks} onEditTaskCb={onEditTask} />

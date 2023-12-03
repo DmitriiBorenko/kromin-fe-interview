@@ -1,8 +1,8 @@
-import {useEffect, useRef, useState} from "react"
-import {createUseStyles} from "react-jss"
-import {CloseIcon} from "../theme/icons"
+import { useEffect, useRef, useState } from "react"
+import { createUseStyles } from "react-jss"
+import { CloseIcon } from "../theme/icons"
 import Button from "./Button"
-import Spinner, {SPINNER_POSITIONS} from "./Spinner"
+import Spinner, { SPINNER_POSITIONS } from "./Spinner"
 
 const useStyles = createUseStyles(theme => ({
     root: {
@@ -35,9 +35,8 @@ const useStyles = createUseStyles(theme => ({
             color: theme.palette.common.black
         }
     },
-    body: ({bodyHeight}) => ({
+    body: ({ bodyHeight }) => ({
         maxHeight: bodyHeight,
-        overflow: "auto"
     }),
     footer: {
         padding: [20, 32],
@@ -60,12 +59,12 @@ const useStyles = createUseStyles(theme => ({
     }
 }))
 
-const Popover = ({onClose, title, children, buttonPrimary, buttonSecondary, isLoading}) => {
+const Popover = ({ onClose, title, children, buttonPrimary, buttonSecondary, isLoading }) => {
     const pageHeight = window.innerHeight
     const headerRef = useRef()
     const footerRef = useRef()
     const [bodyHeight, setBodyHeight] = useState(window.innerHeight)
-    const classes = useStyles({bodyHeight})
+    const classes = useStyles({ bodyHeight })
 
     useEffect(() => {
         document.body.style.overflowY = "hidden"
@@ -81,7 +80,7 @@ const Popover = ({onClose, title, children, buttonPrimary, buttonSecondary, isLo
 
     return (
         <div className={classes.root}>
-            <div className={classes.overlay} onClick={onClose}/>
+            <div className={classes.overlay} onClick={onClose} />
             <div className={classes.modal}>
                 <CloseIcon
                     size={24}
@@ -124,7 +123,7 @@ const Popover = ({onClose, title, children, buttonPrimary, buttonSecondary, isLo
                     </div>
                 )}
 
-                {isLoading && <Spinner position={SPINNER_POSITIONS.ABSOLUTE} overlay/>}
+                {isLoading && <Spinner position={SPINNER_POSITIONS.ABSOLUTE} overlay />}
             </div>
         </div>
     )
